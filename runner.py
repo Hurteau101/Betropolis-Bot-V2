@@ -8,8 +8,10 @@ from underdog import Underdog
 class EsportsRunner:
     def run_bot(self):
         parlay, underdog, prizepicks = ParlayPlay(), Underdog(), PrizePicks()
-        bots = [parlay, underdog, prizepicks]
-        random.shuffle(bots)
+        main_bots = [underdog, prizepicks]
+        random.shuffle(main_bots)
+
+        bots = [parlay] + main_bots
 
         for bot in bots:
             print(bot.__str__())
