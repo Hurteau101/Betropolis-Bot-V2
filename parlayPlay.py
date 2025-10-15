@@ -20,14 +20,24 @@ class ParlayPlay(Esports):
         if not esports_data:
             return None
 
+        # differences = self._create_differences(
+        #     esports_data=esports_data,
+        #     base_book_1="prizepicks",
+        #     base_book_2="underdog",
+        #     compare_book="parlayplay",
+        #     compute_average=True,
+        #     difference_threshold=1,
+        #     difference_percentage=10
+        # )
+
         differences = self._create_differences(
             esports_data=esports_data,
-            base_book_1="prizepicks",
-            base_book_2="underdog",
-            compare_book="parlayplay",
-            compute_average=True,
+            base_book_1="parlayplay",
+            base_book_2="prizepicks",
+            compute_average=False,
             difference_threshold=1,
-            difference_percentage=10
+            difference_percentage=10,
+            main_book_name="parlayplay"
         )
 
         slips = self._create_slips(
