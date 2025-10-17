@@ -36,7 +36,7 @@ class ParlayPlay(Esports):
             base_book_2="prizepicks",
             compute_average=False,
             difference_threshold=1,
-            difference_percentage=10,
+            difference_percentage=5,
             main_book_name="parlayplay"
         )
 
