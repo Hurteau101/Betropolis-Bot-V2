@@ -1,4 +1,5 @@
 from esports import Esports
+from redis_manager import RedisManger
 
 
 class Underdog(Esports):
@@ -15,8 +16,41 @@ class Underdog(Esports):
             }
         }
 
+    def create_streak(self, differences, main_difference=15, secondary_difference=7.5):
+        difference_sorted = sorted(differences, key=lambda x: x['difference_percentage'], reverse=True)
 
-    def run_book(self):
+        redis = RedisManger(db=6)
+        existing_players = redis.check_players(difference_sorted)
+
+        eligible = [
+            diff for diff in difference_sorted
+            if f"{diff['player_name']}-{diff['stat_type']}-{diff['team']}-{diff['opponent']}-{diff['start_date']}"
+               not in existing_players and redis.check_past_time(diff["start_date"])
+        ]
+
+        if not eligible:
+            return []
+
+        first_player = next((p for p in eligible if p["difference_percentage"] > main_difference), None)
+
+        second_player = next(
+            (p for p in eligible if p != first_player and (p["team"] != first_player["team"] or p["team"] != first_player["opponent"])
+             and p["difference_percentage"] > secondary_difference),
+            None
+        )
+
+        valid_selections = [p for p in [first_player, second_player] if p is not None]
+
+        if len(valid_selections) != 2:
+            return []
+
+        if valid_selections:
+            redis.store_player(differences=[[player] for player in valid_selections])
+
+        return valid_selections
+
+
+    def run_book(self, enable_streak=False, main_difference=15, secondary_difference=7.5):
         esports_data = self._get_esports_data()
         if not esports_data:
             return None
@@ -31,27 +65,12 @@ class Underdog(Esports):
             main_book_name="underdog"
         )
 
-        slips = self._create_slips(
-            difference_lines=differences,
-        )
+        if not enable_streak:
+            slips = self._create_slips(difference_lines=differences)
+        else:
+            slips = self.create_streak(differences=differences, main_difference=main_difference, secondary_difference=secondary_difference)
 
-        self._send_discord_message(slips, "Underdog", self.additional_information)
-
-        # with open("esports_differences_ud_slips.json", "r") as file:
-        #     import json
-        #     existing_slips = json.load(file)
-
-
-        # with open("esports_differences_ud.json", "w") as file:
-        #     import json
-        #     json.dump(differences, file, indent=4)
-
-        # with open("esports_differences_ud_slips.json", "w") as file:
-        #     import json
-        #     json.dump(slips, file, indent=4)
-
-
-
+        self._send_discord_message(slips, "Underdog", self.additional_information, streaks=enable_streak)
 
 if __name__ == "__main__":
     underdog = Underdog()

@@ -226,18 +226,22 @@ class Esports(ABC):
     def _create_difference_percentage(self, line1, line2, difference_amount):
         return round(difference_amount / abs((line1 + line2) / 2) * 100, 2)
 
-    def _send_discord_message(self, slips, book_name, slip_information):
+    def _send_discord_message(self, slips, book_name, slip_information, streaks=False):
         if slips:
             discord = DiscordBot()
 
-            for slip in slips:
-                slip_length = len(slip)
-                slip_info = slip_information[slip_length]
+            # Conditional handling for streaks
+            if streaks:
+                discord.send_message(slip=slips, book_name="Underdog", slip_information=None, streaks=streaks)
+            else:
+                for slip in slips:
+                    slip_length = len(slip)
+                    slip_info = slip_information[slip_length]
 
-                if not slip_info:
-                    continue
+                    if not slip_info:
+                        continue
 
-                discord.send_message(slip=slip, book_name=book_name, slip_information=slip_info)
+                    discord.send_message(slip=slip, book_name=book_name, slip_information=slip_info, streaks=streaks)
 
 
 

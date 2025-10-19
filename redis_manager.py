@@ -2,8 +2,8 @@ from datetime import datetime, timezone
 import redis
 
 class RedisManger:
-    def __init__(self):
-        self.redis_client = redis.Redis(host="localhost", port=6379, decode_responses=True, db=5)
+    def __init__(self, db=5):
+        self.redis_client = redis.Redis(host="localhost", port=6379, decode_responses=True, db=db)
 
     def check_past_time(self, date_time):
         check_time = datetime.fromisoformat(date_time.replace("Z", "")).replace(tzinfo=timezone.utc)
@@ -24,6 +24,8 @@ class RedisManger:
         return existing_players
 
     def store_player(self, differences):
+        print(differences)
+
         if not differences:
             return
 

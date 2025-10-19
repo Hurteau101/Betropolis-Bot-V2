@@ -10,6 +10,9 @@ class EsportsRunner:
         parlay = ParlayPlay()
         parlay.run_book()
 
+        underdog = Underdog()
+        underdog.run_book(enable_streak=True)
+
         # parlay, underdog, prizepicks = ParlayPlay(), Underdog(), PrizePicks()
         # main_bots = [underdog, prizepicks]
         # random.shuffle(main_bots)
