@@ -5,6 +5,10 @@ class ParlayPlay(Esports):
     def __init__(self):
         super().__init__()
         self.additional_information = {
+            2: {
+                "unit_size": "0.55x",
+                "expected_payout": "3.13x"
+            },
             3: {
                 "unit_size": "0.40x",
                 "expected_payout": "5.83x"
@@ -36,13 +40,13 @@ class ParlayPlay(Esports):
             base_book_2="prizepicks",
             compute_average=False,
             difference_threshold=1,
-            difference_percentage=5,
+            difference_percentage=10,
             main_book_name="parlayplay"
         )
 
         slips = self._create_slips(
             difference_lines=differences,
-            slip_size=4
+            slip_size=2
         )
 
         self._send_discord_message(slips, "Parlayplay", self.additional_information)
