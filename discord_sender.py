@@ -1,3 +1,5 @@
+import platform
+
 from discordwebhook import Discord
 from collections import Counter
 from datetime import datetime, timezone
@@ -102,6 +104,24 @@ class DiscordBot:
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
 
+    def get_font(size: int = 38):
+        system = platform.system()
+
+        if system == "Windows":
+            font_path = os.path.join(os.environ.get("WINDIR", "C:\\Windows"), "Fonts", "seguisym.ttf")
+        elif system == "Linux":
+            font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+        else:
+            font_path = "/Library/Fonts/Arial Unicode.ttf"
+
+        try:
+            font = ImageFont.truetype(font_path, size)
+        except Exception as e:
+            print(f"⚠️ Font load failed ({font_path}): {e}")
+            font = ImageFont.load_default()
+
+        return font
+
     def streaks_image(self, players: list[dict]):
         def draw_bold_text(draw, position, text, font, fill, offset=1):
             x, y = position
@@ -113,8 +133,10 @@ class DiscordBot:
 
         # Fonts
         try:
-            font_main = ImageFont.truetype("seguisym.ttf", 38)  # supports ★
-            font_time = ImageFont.truetype("seguisym.ttf", 38)
+            # font_main = ImageFont.truetype("seguisym.ttf", 38)  # supports ★
+            # font_time = ImageFont.truetype("seguisym.ttf", 38)
+            font_main = DiscordBot.get_font(38)
+            font_time = DiscordBot.get_font(38)
         except:
             font_main = ImageFont.load_default()
             font_time = ImageFont.load_default()

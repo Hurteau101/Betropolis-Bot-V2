@@ -33,9 +33,12 @@ class Underdog(Esports):
 
         first_player = next((p for p in eligible if p["difference_percentage"] > main_difference), None)
 
+        if first_player is None:
+            return []
+
         second_player = next(
-            (p for p in eligible if p != first_player and (p["team"] != first_player["team"] or p["team"] != first_player["opponent"])
-             and p["difference_percentage"] > secondary_difference),
+            (p for p in eligible if p != first_player and (p.get("team") != first_player.get("team") or p.get("team") != first_player.get("opponent"))
+             and p.get("difference_percentage") > secondary_difference),
             None
         )
 
