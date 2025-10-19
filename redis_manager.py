@@ -24,8 +24,6 @@ class RedisManger:
         return existing_players
 
     def store_player(self, differences):
-        print(differences)
-
         if not differences:
             return
 
