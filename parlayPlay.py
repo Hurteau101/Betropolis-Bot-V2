@@ -37,7 +37,7 @@ class ParlayPlay(Esports):
         differences = self._create_differences(
             esports_data=esports_data,
             base_book_1="parlayplay",
-            base_book_2="prizepicks",
+            base_book_2="underdog",
             compute_average=False,
             difference_threshold=1,
             difference_percentage=10,
