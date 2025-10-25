@@ -16,7 +16,7 @@ class Underdog(Esports):
             }
         }
 
-    def create_streak(self, differences, main_difference=15, secondary_difference=7.5):
+    def create_streak(self, differences, main_difference=20, secondary_difference=7):
         difference_sorted = sorted(differences, key=lambda x: x['difference_percentage'], reverse=True)
 
         redis = RedisManger(db=6)
