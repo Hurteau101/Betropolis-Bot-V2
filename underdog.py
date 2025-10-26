@@ -37,7 +37,7 @@ class Underdog(Esports):
             return []
 
         second_player = next(
-            (p for p in eligible if p != first_player and (p.get("team") != first_player.get("team") or p.get("team") != first_player.get("opponent"))
+            (p for p in eligible if p != first_player or (p.get("team") != first_player.get("team") or p.get("team") != first_player.get("opponent"))
              and p.get("difference_percentage") > secondary_difference),
             None
         )
