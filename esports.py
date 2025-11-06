@@ -20,7 +20,7 @@ class Esports(ABC):
 
     def _get_esports_data(self):
         """Fetch esports data from the API."""
-        url = "http://155.117.40.39/dfs/esport_lines/differences"
+        url = "https://api.differentodds.com/dfs/esport_lines/differences"
 
         params = {
             "books": [

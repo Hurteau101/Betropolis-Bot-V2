@@ -7,21 +7,29 @@ from underdog import Underdog
 
 class EsportsRunner:
     def run_bot(self):
+        # parlay = ParlayPlay()
+        # parlay.run_book()
+        #
+        # underdog = Underdog()
+        # underdog.run_book(enable_streak=True)
+
         parlay = ParlayPlay()
-        parlay.run_book()
-
         underdog = Underdog()
-        underdog.run_book(enable_streak=True)
+        underdog_streak = Underdog()  # separate instance for streaks
+        prizepicks = PrizePicks()
 
-        # parlay, underdog, prizepicks = ParlayPlay(), Underdog(), PrizePicks()
-        # main_bots = [underdog, prizepicks]
-        # random.shuffle(main_bots)
-        #
-        # bots = [parlay] + main_bots
-        #
-        # for bot in bots:
-        #     print(bot.__str__())
-        #     bot.run_book()
+        main_bots = [underdog, prizepicks]
+        random.shuffle(main_bots)
+
+        bots = [parlay] + main_bots + [underdog_streak]
+
+        for bot in bots:
+            print(bot.__str__())
+
+            if bot is underdog_streak:
+                bot.run_book(enable_streak=True)
+            else:
+                bot.run_book()
 
 
 if __name__ == "__main__":
