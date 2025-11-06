@@ -30,9 +30,11 @@ class PrizePicks(Esports):
             main_book_name="prizepicks"
         )
 
+
         slips = self._create_slips(
             difference_lines=differences,
         )
+
 
         self._send_discord_message(slips, "Prizepicks", self.additional_information)
 

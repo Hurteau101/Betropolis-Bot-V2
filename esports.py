@@ -110,7 +110,6 @@ class Esports(ABC):
             "direction": direction,
         }
 
-
     def _create_differences(self, esports_data, base_book_1, base_book_2, main_book_name=None, compare_book=None, compute_average=False,
                             difference_threshold: float=1, difference_percentage:int=10):
         if compute_average and not compare_book:
@@ -136,11 +135,16 @@ class Esports(ABC):
             if not book_1 or not book_2:
                 continue
 
+            projection_id_book_1 = book_1.get("betlink", {}).get("raw_projection_id")
+            projection_id_book_2 = book_2.get("betlink", {}).get("raw_projection_id")
+
             additional_information = {
                 "league": player.get("league"),
                 "team": player.get("player_team"),
                 "opponent": player.get("opponent"),
-                "start_date": player.get("start_date")
+                "start_date": player.get("start_date"),
+                f"{book_1.get('book_name')}_projection_id": projection_id_book_1 if projection_id_book_1 else "",
+                f"{book_2.get('book_name')}_projection_id": projection_id_book_2 if projection_id_book_2 else "",
             }
 
             if not compute_average:

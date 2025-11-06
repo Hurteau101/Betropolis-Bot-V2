@@ -29,6 +29,16 @@ class DiscordBot:
             }
         }
 
+    def discord_webhook_mapper(self, book_name):
+        mapper = {
+            "underdog": os.getenv("DISCORD_WEBHOOK_URL_UNDERDOG"),
+            "prizepicks": os.getenv("DISCORD_WEBHOOK_URL_PRIZEPICKS"),
+            "parlayplay": os.getenv("DISCORD_WEBHOOK_URL_PARLAYPLAY"),
+        }
+
+        return mapper.get(book_name.lower())
+
+
     @staticmethod
     def _date_formatter(slip_date, date_format="%b %d, %Y @ %I:%M %p %Z"):
         try:
@@ -45,6 +55,10 @@ class DiscordBot:
             return "N/A"
 
     def _slip_fields(self, slip_data, book_name):
+        if book_name.lower() == "prizepicks":
+            raw_bet_link = ",".join(link.get("prizepicks_betlink_id") for link in slip_data if link.get("prizepicks_betlink_id"))
+            bet_link = f"https://app.prizepicks.com/?projections={raw_bet_link}"
+
         main_fields = [
             {
                 "name": "",
@@ -58,11 +72,30 @@ class DiscordBot:
             }
             for slip in slip_data
         ]
+
+        if book_name.lower() == "prizepicks":
+            mapper = {
+                'over': 'o',
+                'under': 'u'
+            }
+
+            raw_bet_link = ",".join(f'{link.get("prizepicks_projection_id")}-{mapper.get(link.get("direction"))}-{link.get("prizepicks")}'
+                                    for link in slip_data if link.get("prizepicks_projection_id"))
+            bet_link = f"https://app.prizepicks.com/?projections={raw_bet_link}"
+
+            main_fields.append({
+                "name": "📲 PrizePick Link",
+                "value": f"[Bet on PrizePicks]({bet_link})",
+                "inline": False
+            })
+
+
         return main_fields
 
     def send_message(self, slip, book_name, slip_information, streaks=False):
         if not streaks:
-            discord = Discord(url=os.getenv("DISCORD_WEBHOOK_SLIPS"))
+            webhook_url = self.discord_webhook_mapper(book_name)
+            discord = Discord(url=webhook_url)
             embed = self._create_message(slip, book_name, slip_information)
             discord.post(embeds=[embed])
         else:
@@ -187,7 +220,7 @@ class DiscordBot:
         buffer.seek(0)
 
         # Send to Discord
-        webhook = DiscordWebhook(url=os.getenv("DISCORD_WEBHOOK_STREAKS"))
+        webhook = DiscordWebhook(url=os.getenv("DISCORD_WEBHOOK_URL_UNDERDOG_STREAKS"))
         webhook.add_file(file=buffer.getvalue(), filename="streaks.png")
         webhook.execute()
 
