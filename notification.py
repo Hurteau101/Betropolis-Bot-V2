@@ -1,8 +1,7 @@
 from datetime import timedelta
 from celery import Celery
-from celery.worker.control import time_limit
-
 from runner import EsportsRunner
+import redis
 
 celery_app = Celery(
     "notify_user_celery",
@@ -25,9 +24,17 @@ celery_app.conf.beat_schedule = {
 
 @celery_app.task(name="notification.notify_user", time_limit=90, soft_time_limit=75)
 def notify_user():
-    runner = EsportsRunner()
-    runner.run_bot()
+    r = redis.Redis(host="localhost", port=6379, db=0)
 
+    lock = r.lock("notify_user_lock", timeout=120, blocking=False)
+    if not lock.acquire():
+        return
+
+    try:
+        runner = EsportsRunner()
+        runner.run_bot()
+    finally:
+        lock.release()
 
 
 
