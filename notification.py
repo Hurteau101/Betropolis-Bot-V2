@@ -1,5 +1,7 @@
 from datetime import timedelta
 from celery import Celery
+from celery.worker.control import time_limit
+
 from runner import EsportsRunner
 
 celery_app = Celery(
@@ -21,7 +23,7 @@ celery_app.conf.beat_schedule = {
     },
 }
 
-@celery_app.task(name="notification.notify_user")
+@celery_app.task(name="notification.notify_user", time_limit=90, soft_time_limit=75)
 def notify_user():
     runner = EsportsRunner()
     runner.run_bot()
