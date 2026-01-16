@@ -59,14 +59,17 @@ class DiscordBot:
             raw_bet_link = ",".join(link.get("prizepicks_betlink_id") for link in slip_data if link.get("prizepicks_betlink_id"))
             bet_link = f"https://app.prizepicks.com/?projections={raw_bet_link}"
 
+
         main_fields = [
             {
                 "name": "",
                 "value": (
                     f"⭐ **({slip.get('player_name').upper()})** "
                     f"{slip.get('direction').title()} {slip.get(book_name)} "
-                    f"{slip.get('stat_type')} [{slip.get('team')}] ⭐\n"
-                    f">>> **Scheduled**: {DiscordBot._date_formatter(slip.get('start_date', 'N/A'))}"
+                    f"{slip.get('stat_type').title()} [{slip.get('team')}] ⭐\n"
+                    f">>> **Scheduled**: {DiscordBot._date_formatter(slip.get('start_date', 'N/A'))} \n"
+                    f"**Match**: {' vs '.join(sorted([slip.get('team'), slip.get('opponent')]))}"
+
                 ),
                 "inline": False,
             }
