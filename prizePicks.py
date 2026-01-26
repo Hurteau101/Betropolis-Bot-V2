@@ -26,7 +26,7 @@ class PrizePicks(Esports):
             base_book_2="underdog",
             compute_average=False,
             difference_threshold=1,
-            difference_percentage=10,
+            difference_percentage=15,
             main_book_name="prizepicks"
         )
 
