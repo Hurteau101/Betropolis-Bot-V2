@@ -6,11 +6,11 @@ class PrizePicks(Esports):
         super().__init__()
         self.additional_information = {
             3: {
-                "unit_size": "0.40x",
+                "unit_size": "0.40u",
                 "expected_payout": "6x"
             },
             4: {
-                "unit_size": "0.25x",
+                "unit_size": "0.25u",
                 "expected_payout": "10x"
             }
         }

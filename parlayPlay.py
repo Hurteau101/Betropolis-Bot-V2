@@ -6,15 +6,15 @@ class ParlayPlay(Esports):
         super().__init__()
         self.additional_information = {
             2: {
-                "unit_size": "0.55x",
+                "unit_size": "0.55u",
                 "expected_payout": "3.13x"
             },
             3: {
-                "unit_size": "0.40x",
+                "unit_size": "0.40u",
                 "expected_payout": "5.83x"
             },
             4: {
-                "unit_size": "0.25x",
+                "unit_size": "0.25u",
                 "expected_payout": "10.8x"
             }
         }

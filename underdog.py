@@ -7,11 +7,11 @@ class Underdog(Esports):
         super().__init__()
         self.additional_information = {
             3: {
-                "unit_size": "0.40x",
-                "expected_payout": "6x"
+                "unit_size": "0.55u",
+                "expected_payout": "6.5x"
             },
             4: {
-                "unit_size": "0.25x",
+                "unit_size": "0.25u",
                 "expected_payout": "10x"
             }
         }
