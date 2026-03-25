@@ -29,14 +29,21 @@ class DiscordBot:
             }
         }
 
-    def discord_webhook_mapper(self, book_name):
+    def discord_mapper(self, book_name):
         mapper = {
-            "underdog": os.getenv("DISCORD_WEBHOOK_URL_UNDERDOG"),
-            "prizepicks": os.getenv("DISCORD_WEBHOOK_URL_PRIZEPICKS"),
+            "underdog": {
+                "webhook": os.getenv("DISCORD_WEBHOOK_URL_UNDERDOG"),
+                "role_id": os.getenv("DISCORD_UD_ROLE_ID")
+            },
+            "prizepicks": {
+                "webhook": os.getenv("DISCORD_WEBHOOK_URL_PRIZEPICKS"),
+                "role_id": os.getenv("DISCORD_PP_ROLE_ID")
+            },
             "parlayplay": os.getenv("DISCORD_WEBHOOK_URL_PARLAYPLAY"),
         }
 
         return mapper.get(book_name.lower())
+
 
 
     @staticmethod
@@ -97,12 +104,17 @@ class DiscordBot:
 
     def send_message(self, slip, book_name, slip_information, streaks=False):
         if not streaks:
-            webhook_url = self.discord_webhook_mapper(book_name)
+            book_mapping = self.discord_mapper(book_name)
+            webhook_url = book_mapping.get("webhook")
+            role_id = book_mapping.get("role_id")
             discord = Discord(url=webhook_url)
             embed = self._create_message(slip, book_name, slip_information)
-            discord.post(embeds=[embed])
+            discord.post(
+                content=f"<@&{role_id}>" if role_id else "",
+                embeds=[embed]
+            )
         else:
-            self.streaks_image(players=slip)
+            self.streaks_image(players=slip, role_id=os.getenv("DISCORD_UD_ROLE_ID"))
 
     def _create_message(self, slip, book_name, slip_information):
         league_count = Counter(player["league"] for player in slip)
@@ -158,7 +170,7 @@ class DiscordBot:
 
         return font
 
-    def streaks_image(self, players: list[dict]):
+    def streaks_image(self, players: list[dict], role_id: str | int):
         def draw_bold_text(draw, position, text, font, fill, offset=1):
             x, y = position
             for dx, dy in [(0, 0), (offset, 0), (0, offset), (offset, offset)]:
@@ -223,7 +235,10 @@ class DiscordBot:
         buffer.seek(0)
 
         # Send to Discord
-        webhook = DiscordWebhook(url=os.getenv("DISCORD_WEBHOOK_URL_UNDERDOG_STREAKS"))
+        webhook = DiscordWebhook(
+            content=f"<@&{role_id}>" if role_id else "",
+            url=os.getenv("DISCORD_WEBHOOK_URL_UNDERDOG_STREAKS")
+        )
         webhook.add_file(file=buffer.getvalue(), filename="streaks.png")
         webhook.execute()
 
