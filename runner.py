@@ -22,12 +22,12 @@ class EsportsRunner:
         random.shuffle(main_bots)
 
         bot_data = {
-            "underdog_1": {
-                "class": underdog,
-                "slip_size": 3,
-                "difference_threshold": 1,
-                "difference_percentage": 10,
-            },
+            # "underdog_1": {
+            #     "class": underdog,
+            #     "slip_size": 3,
+            #     "difference_threshold": 1,
+            #     "difference_percentage": 10,
+            # },
             "underdog_2": {
                 "class": underdog,
                 "slip_size": 2,
