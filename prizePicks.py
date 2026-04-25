@@ -15,7 +15,7 @@ class PrizePicks(Esports):
             }
         }
 
-    def run_book(self):
+    def run_book(self, difference_threshold=1, difference_percentage=15, slip_size=3):
         esports_data = self._get_esports_data()
         if not esports_data:
             return None
@@ -25,14 +25,15 @@ class PrizePicks(Esports):
             base_book_1="prizepicks",
             base_book_2="underdog",
             compute_average=False,
-            difference_threshold=1,
-            difference_percentage=15,
+            difference_threshold=difference_percentage,
+            difference_percentage=difference_threshold,
             main_book_name="prizepicks"
         )
 
 
         slips = self._create_slips(
             difference_lines=differences,
+            slip_size=slip_size
         )
 
 

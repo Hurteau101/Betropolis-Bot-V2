@@ -183,8 +183,17 @@ class DiscordBot:
         try:
             # font_main = ImageFont.truetype("seguisym.ttf", 38)  # supports ★
             # font_time = ImageFont.truetype("seguisym.ttf", 38)
-            font_main = DiscordBot.get_font(38)
-            font_time = DiscordBot.get_font(38)
+            player = players[0]
+
+            if len(player.get("player_name", "")) < 7:
+                font_main = DiscordBot.get_font(23)
+                font_time = DiscordBot.get_font(23)
+            elif len(player.get("player_name", "")) < 10:
+                font_main = DiscordBot.get_font(22)
+                font_time = DiscordBot.get_font(22)
+            else:
+                font_main = DiscordBot.get_font(20)
+                font_time = DiscordBot.get_font(20)
         except:
             font_main = ImageFont.load_default()
             font_time = ImageFont.load_default()
@@ -196,13 +205,13 @@ class DiscordBot:
 
         # Positioning
         x = streak_starter_image.width * 0.08
-        y = streak_starter_image.height * 0.45
+        y = streak_starter_image.height * 0.58
         line_spacing = 130
 
         with Pilmoji(streak_starter_image) as pilmoji:
             for i, player in enumerate(players):
                 base_y = y + (i * line_spacing)
-                time_y = base_y + 55
+                time_y = base_y + 40
 
                 # Text
                 main_text = (

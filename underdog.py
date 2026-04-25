@@ -6,17 +6,38 @@ class Underdog(Esports):
     def __init__(self):
         super().__init__()
         self.additional_information = {
+            4: {
+                "unit_size": "0.25u",
+                "expected_payout": "10x"
+            },
             3: {
                 "unit_size": "0.55u",
                 "expected_payout": "6.5x"
             },
-            4: {
-                "unit_size": "0.25u",
-                "expected_payout": "10x"
+            2: {
+                "unit_size": "0.85u",
+                "expected_payout": "3.5x"
             }
         }
 
-    def create_streak(self, differences, main_difference=20, secondary_difference=7):
+    def create_single_leg_streak(self, differences, difference_threshold=15):
+        redis = RedisManger(db=6)
+        eligible = [
+            diff for diff in differences
+            if diff['difference_percentage'] > difference_threshold
+            and f"{diff['player_name']}-{diff['stat_type']}-{diff['team']}-{diff['opponent']}-{diff['start_date']}" not in redis.check_players(differences)
+            and redis.check_past_time(diff["start_date"])
+        ]
+
+        if not eligible:
+            return []
+
+        selected_player = eligible[0]
+        redis.store_player(differences=[[selected_player]])
+
+        return [selected_player]
+
+    def create_2_streak(self, differences, main_difference=20, secondary_difference=7):
         difference_sorted = sorted(differences, key=lambda x: x['difference_percentage'], reverse=True)
 
         redis = RedisManger(db=6)
@@ -55,7 +76,7 @@ class Underdog(Esports):
         return valid_selections
 
 
-    def run_book(self, enable_streak=False, main_difference=15, secondary_difference=7.5):
+    def run_book(self, enable_streak=False, difference_threshold=15, difference_percentage=1, secondary_difference=7.5, slip_size=3):
         esports_data = self._get_esports_data()
         if not esports_data:
             return None
@@ -65,15 +86,16 @@ class Underdog(Esports):
             base_book_1="prizepicks",
             base_book_2="underdog",
             compute_average=False,
-            difference_threshold=1,
-            difference_percentage=15,
+            difference_threshold=difference_threshold,
+            difference_percentage=difference_percentage,
             main_book_name="underdog"
         )
 
         if not enable_streak:
-            slips = self._create_slips(difference_lines=differences)
+            slips = self._create_slips(difference_lines=differences, slip_size=slip_size)
         else:
-            slips = self.create_streak(differences=differences, main_difference=main_difference, secondary_difference=secondary_difference)
+            # slips = self.create_streak(differences=differences, main_difference=main_difference, secondary_difference=secondary_difference)
+            slips = self.create_single_leg_streak(differences=differences, difference_threshold=difference_threshold)
 
         self._send_discord_message(slips, "Underdog", self.additional_information, streaks=enable_streak)
 
