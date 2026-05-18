@@ -18,8 +18,8 @@ class EsportsRunner:
         underdog_streak = Underdog()  # separate instance for streaks
         prizepicks = PrizePicks()
 
-        main_bots = [underdog, prizepicks]
-        random.shuffle(main_bots)
+        # main_bots = [underdog, prizepicks]
+        # random.shuffle(main_bots)
 
         bot_data = {
             # "underdog_1": {
@@ -50,6 +50,7 @@ class EsportsRunner:
         }
 
         bots = list(bot_data.items())
+        random.shuffle(bots)
         bots = dict(bots)
 
         # bots = main_bots + [underdog_streak]
