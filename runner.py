@@ -32,7 +32,7 @@ class EsportsRunner:
                 "class": prizepicks,
                 "slip_size": 3,
                 "difference_threshold": 1,
-                "difference_percentage": 10,
+                "difference_percentage": 5,
             },
             "underdog_2": {
                 "class": underdog,
