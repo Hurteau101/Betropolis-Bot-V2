@@ -32,7 +32,7 @@ class EsportsRunner:
                 "class": prizepicks,
                 "slip_size": 3,
                 "difference_threshold": 1,
-                "difference_percentage": 5,
+                "difference_percentage": 10,
             },
             "underdog_2": {
                 "class": underdog,
@@ -50,7 +50,7 @@ class EsportsRunner:
         }
 
         bots = list(bot_data.items())
-        # random.shuffle(bots)
+        random.shuffle(bots)
         bots = dict(bots)
 
         # bots = main_bots + [underdog_streak]
