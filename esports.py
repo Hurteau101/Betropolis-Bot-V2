@@ -110,6 +110,10 @@ class Esports(ABC):
             "direction": direction,
         }
 
+    def _has_both_directions(self, book):
+        directions = book.get("directions", [])
+        return len(directions) == 2 and all(d.get("multiplier") == 1 for d in directions)
+
     def _create_differences(self, esports_data, base_book_1, base_book_2, main_book_name=None, compare_book=None, compute_average=False,
                             difference_threshold: float=1, difference_percentage:int=10):
         if compute_average and not compare_book:
@@ -127,7 +131,11 @@ class Esports(ABC):
             if num_books < 2:
                 continue
 
-            book_lines = {book["book_name"]: book for book in books}
+            book_lines = {
+                book["book_name"]: book
+                for book in books
+                if self._has_both_directions(book)
+            }
 
             book_1 = book_lines.get(base_book_1)
             book_2 = book_lines.get(base_book_2)
